@@ -1,6 +1,6 @@
-data = [1,4,76,2,452,23]
+data = [1,2,4,23,76,452] # In this implementation list must be ordered
 size = len(data)
-objective = 452
+objective = 76
 
 def binarySearch(data, left, right, goal):
   while left <= right:
