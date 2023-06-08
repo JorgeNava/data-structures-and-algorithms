@@ -59,7 +59,7 @@ class LinkedList:
 	> Once we have the sum, we convert extract each of its digits and store
 	> them in a new linked list.
 
-	> We need to itereate through the list in an inverse oreder or try to
+	> We need to itereate through the list in an inverse order or try to
 	> iterate through it but re-order the numbers.
 
 	> Time complexity of O(n) since we only iterate through the linked list constant times (3)

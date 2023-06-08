@@ -18,9 +18,9 @@ Output: [1,4]
 
 Follow-up: Can you come up with an algorithm that is less than O(n^2) time complexity?
 """
-nums = [2, 7, 11, 15]
-target = 9
-expectedOutput = [0, 1]
+nums = [3,3,7,1,10,23,7,9,6,0,-1,6]
+target = 13
+expectedOutput = [1, 4]
 output = []
 
 
