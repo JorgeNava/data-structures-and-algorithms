@@ -53,31 +53,32 @@ function getDealersFromDB(filters: Filter): Array<string> {
   const DEALERS: Array<Dealer> = sampleData?.data;
   const TARGET_CP: string = filters?.cp;
   const RETURN_VALUE: Array<string> = [];
+  let IS_CLOSE_DEALER = false;
 
-  // FIRST PART
-  for (let i = 0; i < DEALERS.length; i++) {
-    const ACTUAL_DEALER: Dealer = DEALERS[i];
-    const ACTUAL_CP: string = ACTUAL_DEALER?.address?.cp;
-    const FIRST_THREE_CHARS: string = ACTUAL_CP.substring(0, 3);
-    const IS_CLOSE_DEALER = FIRST_THREE_CHARS === TARGET_CP;
-
-    console.log('[NAVA] ACTUAL_CP IS_CLOSE_DEALER:', ACTUAL_CP, IS_CLOSE_DEALER);
-    if (IS_CLOSE_DEALER) {
-      
-    }
-  }
-
-  // SECOND PART
-  const FULL_TARGET_CP = '72550';
   const ALL_CPS = DEALERS.map((DEALER) => {
     return DEALER?.address?.cp;
   });
   const ORDERED_CPS = quickSort(ALL_CPS);
-  const INDEX_OF_FULL_TARGET_CP = ORDERED_CPS.indexOf(FULL_TARGET_CP);
-  const INMEDIATE_LOWER_CP = ORDERED_CPS[INDEX_OF_FULL_TARGET_CP - 1];
-  const INMEDIATE_HIGHER_CP = ORDERED_CPS[INDEX_OF_FULL_TARGET_CP + 1];
+  const INDEX_OF_TARGET_CP = ORDERED_CPS.indexOf(TARGET_CP);
 
-  return [INMEDIATE_LOWER_CP, INMEDIATE_HIGHER_CP];
+  if (INDEX_OF_TARGET_CP) {
+    RETURN_VALUE.push(ORDERED_CPS[INDEX_OF_TARGET_CP]);
+    for (let i = 1; i <= ORDERED_CPS.length; i++) {
+      if (RETURN_VALUE.length < 5 && INDEX_OF_TARGET_CP - i >= 0) {
+        const INMEDIATE_LOWER_CP = ORDERED_CPS[INDEX_OF_TARGET_CP - i];
+        IS_CLOSE_DEALER = INMEDIATE_LOWER_CP.substring(0, 3) === TARGET_CP.substring(0, 3);
+        if(IS_CLOSE_DEALER) RETURN_VALUE.push(INMEDIATE_LOWER_CP);
+      }
+      if (RETURN_VALUE.length < 5 && i + INDEX_OF_TARGET_CP <= ORDERED_CPS.length) {
+        const INMEDIATE_HIGHER_CP = ORDERED_CPS[INDEX_OF_TARGET_CP + i];
+        IS_CLOSE_DEALER = INMEDIATE_HIGHER_CP.substring(0, 3) === TARGET_CP.substring(0, 3);
+        if(IS_CLOSE_DEALER) RETURN_VALUE.push(INMEDIATE_HIGHER_CP);
+      }
+    }
+    return quickSort(RETURN_VALUE);
+  } else {
+    return [];
+  }
 }
 
 function quickSort(array: Array<any>): Array<any>{
@@ -105,6 +106,6 @@ const divideArray = function (array: any): Array<any> {
   return [LEFT_SIDE, [PIVOT], RIGHT_SIDE];
 }
 
-const SAMPLE_FILTER: Filter = { cp: '725' };
+const SAMPLE_FILTER: Filter = { cp: '72550' };
 const RESULT = getDealersFromDB(SAMPLE_FILTER);
 console.log('[NAVA] RESULT:', RESULT);

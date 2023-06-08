@@ -28,31 +28,37 @@ var sampleData = { "data": [{ "dealerId": 1, "dealerName": "Autos Nuevos", "deal
             "dealerName": "Autos Semi Nuevos", "dealerBrand": "vw", "address": { "street": "Calle 2", "cp": "72510", "state": "CDMX" } }],
     "nextToken": "12dadadopwqjepoqjeqwen" };
 function getDealersFromDB(filters) {
-    var _a;
     var DEALERS = sampleData === null || sampleData === void 0 ? void 0 : sampleData.data;
     var TARGET_CP = filters === null || filters === void 0 ? void 0 : filters.cp;
     var RETURN_VALUE = [];
-    // FIRST PART
-    for (var i = 0; i < DEALERS.length; i++) {
-        var ACTUAL_DEALER = DEALERS[i];
-        var ACTUAL_CP = (_a = ACTUAL_DEALER === null || ACTUAL_DEALER === void 0 ? void 0 : ACTUAL_DEALER.address) === null || _a === void 0 ? void 0 : _a.cp;
-        var FIRST_THREE_CHARS = ACTUAL_CP.substring(0, 3);
-        var IS_CLOSE_DEALER = FIRST_THREE_CHARS === TARGET_CP;
-        console.log('[NAVA] ACTUAL_CP IS_CLOSE_DEALER:', ACTUAL_CP, IS_CLOSE_DEALER);
-        if (IS_CLOSE_DEALER) {
-        }
-    }
-    // SECOND PART
-    var FULL_TARGET_CP = '72550';
+    var IS_CLOSE_DEALER = false;
     var ALL_CPS = DEALERS.map(function (DEALER) {
         var _a;
         return (_a = DEALER === null || DEALER === void 0 ? void 0 : DEALER.address) === null || _a === void 0 ? void 0 : _a.cp;
     });
     var ORDERED_CPS = quickSort(ALL_CPS);
-    var INDEX_OF_FULL_TARGET_CP = ORDERED_CPS.indexOf(FULL_TARGET_CP);
-    var INMEDIATE_LOWER_CP = ORDERED_CPS[INDEX_OF_FULL_TARGET_CP - 1];
-    var INMEDIATE_HIGHER_CP = ORDERED_CPS[INDEX_OF_FULL_TARGET_CP + 1];
-    return [INMEDIATE_LOWER_CP, INMEDIATE_HIGHER_CP];
+    var INDEX_OF_TARGET_CP = ORDERED_CPS.indexOf(TARGET_CP);
+    if (INDEX_OF_TARGET_CP) {
+        RETURN_VALUE.push(ORDERED_CPS[INDEX_OF_TARGET_CP]);
+        for (var i = 1; i <= ORDERED_CPS.length; i++) {
+            if (RETURN_VALUE.length < 5 && INDEX_OF_TARGET_CP - i >= 0) {
+                var INMEDIATE_LOWER_CP = ORDERED_CPS[INDEX_OF_TARGET_CP - i];
+                IS_CLOSE_DEALER = INMEDIATE_LOWER_CP.substring(0, 3) === TARGET_CP.substring(0, 3);
+                if (IS_CLOSE_DEALER)
+                    RETURN_VALUE.push(INMEDIATE_LOWER_CP);
+            }
+            if (RETURN_VALUE.length < 5 && i + INDEX_OF_TARGET_CP <= ORDERED_CPS.length) {
+                var INMEDIATE_HIGHER_CP = ORDERED_CPS[INDEX_OF_TARGET_CP + i];
+                IS_CLOSE_DEALER = INMEDIATE_HIGHER_CP.substring(0, 3) === TARGET_CP.substring(0, 3);
+                if (IS_CLOSE_DEALER)
+                    RETURN_VALUE.push(INMEDIATE_HIGHER_CP);
+            }
+        }
+        return quickSort(RETURN_VALUE);
+    }
+    else {
+        return [];
+    }
 }
 function quickSort(array) {
     if (array.length < 2) {
@@ -78,6 +84,6 @@ var divideArray = function (array) {
     }
     return [LEFT_SIDE, [PIVOT], RIGHT_SIDE];
 };
-var SAMPLE_FILTER = { cp: '725' };
+var SAMPLE_FILTER = { cp: '72550' };
 var RESULT = getDealersFromDB(SAMPLE_FILTER);
 console.log('[NAVA] RESULT:', RESULT);
