@@ -1,6 +1,9 @@
 def countPalyndromes(sampleArray):
     COUNT = {}
-    
+    """ 
+        var re = /[\W_]/g; // or var re = /[^A-Za-z0-9]/g;
+        const CLEAN_WORD = word.toLowerCase().replace(re, '');
+    """
     for word in sampleArray:
         REVERSED_WORD = word[::-1]
         if word.lower() == REVERSED_WORD.lower():
