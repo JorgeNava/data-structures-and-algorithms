@@ -20,8 +20,6 @@ User: GDO
 Response: GDO: GOD, DOG
 */
 
-var permutatedInputs = {};
-
 function permutations(input) {
   const SORTED_INPUT = input.sort();
 
